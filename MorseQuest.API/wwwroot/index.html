@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MorseQuest - Азбука Морзе</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="notifications-container" id="notificationsContainer"></div>
+
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="app-title">
+                <span class="morse-icon">.--. --- ... .-.. . -.. -. .. . .-.-.-</span> MorseQuest
+            </h1>
+            <p class="app-subtitle">Изучай азбуку Морзе в игровой форме</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-section="translator">Перевод</button>
+            <button class="nav-tab" data-section="training">Тренировка</button>
+            <button class="nav-tab" data-section="quest">Квест</button>
+            <button class="nav-tab" data-section="leaderboard">Лидеры</button>
+        </nav>
+
+        <div class="section active" id="section-translator">
+            <div class="card">
+                <h2 class="card-title">Переводчик Морзе</h2>
+
+                <div class="input-group">
+                    <input type="text" class="input-field" id="translateInput" placeholder="Введите текст или код Морзе...">
+
+                    <select class="select-field" id="translateMode">
+                        <option value="textToMorse">Текст - Морзе</option>
+                        <option value="morseToText">Морзе - Текст</option>
+                    </select>
+
+                    <button class="btn btn-primary" id="translateBtn">Перевести</button>
+                    <button class="btn btn-outline" id="audioBtn">Прослушать</button>
+                </div>
+
+                <div class="translation-output" id="translationResult">
+                    <span class="placeholder-text">Результат появится здесь...</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Быстрые примеры</h2>
+                <div class="examples-grid">
+                    <button class="btn-example" data-text="SOS" data-mode="textToMorse">
+                        <span class="example-text">SOS</span>
+                        <span class="example-morse">... --- ...</span>
+                    </button>
+                    <button class="btn-example" data-text="HELLO" data-mode="textToMorse">
+                        <span class="example-text">HELLO</span>
+                        <span class="example-morse">.... . .-.. .-.. ---</span>
+                    </button>
+                    <button class="btn-example" data-text="MORSE" data-mode="textToMorse">
+                        <span class="example-text">MORSE</span>
+                        <span class="example-morse">-- --- .-. ... .</span>
+                    </button>
+                    <button class="btn-example" data-text="... --- ..." data-mode="morseToText">
+                        <span class="example-morse">... --- ...</span>
+                        <span class="example-text">SOS</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card" id="historyCard" style="display: none;">
+                <h2 class="card-title">История переводов</h2>
+                <div id="historyList"></div>
+            </div>
+        </div>
+
+        <div class="section" id="section-training">
+            <div class="card">
+                <h2 class="card-title">Тренировка</h2>
+
+                <div id="trainingSetup">
+                    <div class="input-group">
+                        <input type="text" class="input-field" id="usernameInput" placeholder="Введи своё имя">
+
+                        <select class="select-field" id="difficultySelect">
+                            <option value="easy">Легкий (буквы)</option>
+                            <option value="medium">Средний (цифры)</option>
+                            <option value="hard">Сложный (слова)</option>
+                        </select>
+
+                        <button class="btn btn-primary btn-lg" id="startTrainingBtn">Начать</button>
+                    </div>
+                </div>
+
+                <div id="trainingGame" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="trainingProgress" style="width: 0%"></div>
+                    </div>
+
+                    <div class="morse-display" id="morseQuestion"></div>
+                    <div class="options-grid" id="optionsContainer"></div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">V</div>
+                            <div class="stat-value text-green" id="correctAnswers">0</div>
+                            <div class="stat-label">Правильно</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">X</div>
+                            <div class="stat-value text-red" id="wrongAnswers">0</div>
+                            <div class="stat-label">Ошибок</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">#</div>
+                            <div class="stat-value text-blue" id="totalQuestions">0</div>
+                            <div class="stat-label">Всего</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">S</div>
+                            <div class="stat-value text-yellow" id="currentStreak">0</div>
+                            <div class="stat-label">Серия</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="section-quest">
+            <div class="card">
+                <h2 class="card-title">Мини-квест</h2>
+
+                <div id="questSetup">
+                    <div class="quest-intro">
+                        <p>Пройди 5 заданий за минимальное время!</p>
+                        <p class="text-muted">За скорость и точность начисляются дополнительные очки</p>
+                    </div>
+                    <button class="btn btn-primary btn-lg" id="startQuestBtn">Начать квест</button>
+                </div>
+
+                <div id="questGame" style="display: none;">
+                    <div class="quest-header">
+                        <div class="timer" id="questTimer">0:00</div>
+                        <div class="quest-task-counter">
+                            Задание <span id="currentTaskNum">1</span>/5
+                        </div>
+                    </div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="questProgressFill" style="width: 0%"></div>
+                    </div>
+
+                    <div class="morse-display" id="questQuestion"></div>
+
+                    <div id="questAnswerArea">
+                        <input type="text" class="input-field quest-input" id="questAnswer"
+                               placeholder="Введи ответ и нажми Enter..." autocomplete="off">
+
+                        <button class="btn btn-primary btn-lg" id="submitQuestBtn">Ответить</button>
+                    </div>
+
+                    <div class="options-grid" id="questOptions" style="display: none;"></div>
+                </div>
+
+                <div id="questResult" style="display: none;">
+                    <div class="quest-complete">
+                        <div class="complete-icon">!</div>
+                        <h2>Квест пройден!</h2>
+
+                        <div class="stats-grid">
+                            <div class="stat-card highlight">
+                                <div class="stat-icon">*</div>
+                                <div class="stat-value text-yellow" id="questScore">0</div>
+                                <div class="stat-label">Очков</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">T</div>
+                                <div class="stat-value text-blue" id="questTime">0:00</div>
+                                <div class="stat-label">Время</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">%</div>
+                                <div class="stat-value text-green" id="questAccuracy">0%</div>
+                                <div class="stat-label">Точность</div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg" id="resetQuestBtn">Пройти заново</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="section-leaderboard">
+            <div class="card">
+                <h2 class="card-title">Таблица лидеров</h2>
+
+                <div class="leaderboard-tabs">
+                    <button class="btn btn-outline active" data-mode="training">Тренировка</button>
+                    <button class="btn btn-outline" data-mode="quest">Квест</button>
+                </div>
+
+                <div id="leaderboardContent">
+                    <div class="loading-placeholder">
+                        <p>Выберите режим для загрузки рейтинга</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/translator.js"></script>
+    <script src="js/training.js"></script>
+    <script src="js/quest.js"></script>
+    <script src="js/leaderboard.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
